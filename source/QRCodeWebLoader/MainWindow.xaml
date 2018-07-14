@@ -1,0 +1,29 @@
+﻿<Window x:Class="QRCodeWebLoader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QRCodeWebLoader"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Title="QRCode Web Loader" Height="450" Width="800"
+        FontSize="12" FontFamily="MS Gothic"
+        Closing="Window_Closing">
+    <Grid>
+        <Label Content="URL" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="93"/>
+        <TextBox x:Name="QRText" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"  HorizontalAlignment="Left" Height="23" Margin="108,9,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="588"/>
+        <Button x:Name="QRCreate" Content="QR作成" HorizontalAlignment="Left" Margin="708,9,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="QRCreate_Click"/>
+
+        <Label Content="保存先フォルダ" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,47,0,0" Width="93" VerticalAlignment="Top" Height="25"/>
+        <TextBox x:Name="FileDirPath" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="108,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="588"/>
+        <Button x:Name="DirDialog" Content="参照" HorizontalAlignment="Left" Margin="708,47,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="DirDialog_Click" />
+        <Button x:Name="Watcher" Content="読取開始" HorizontalAlignment="Left" Margin="708,140,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="Watcher_Click"/>
+        <Label Content="音量" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.798,-0.389" Width="93"  Height="25" />
+        <Slider x:Name="Volume" HorizontalAlignment="Left" Margin="108,84,0,0" VerticalAlignment="Top" Width="588"  Height="25" Maximum="100" SmallChange="1" Value="100" IsSnapToTickEnabled="True"/>
+        <Label Content="{Binding Value, ElementName=Volume}" HorizontalAlignment="Left" Margin="708,84,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
+
+        <Button x:Name="CreateLauncher" Content="同時起動ショートカット作成" HorizontalAlignment="Left" Margin="516,140,0,0" VerticalAlignment="Top" Width="180" Height="25" Click="CreateLauncher_Click"/>
+
+        <Label x:Name="Status" Content="読み取り停止中" HorizontalContentAlignment="Center" FontSize="40" Foreground="Red" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,234,0,0" VerticalAlignment="Top" Width="773" Height="116"/>
+    </Grid>
+</Window>
