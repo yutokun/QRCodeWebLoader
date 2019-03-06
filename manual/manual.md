@@ -101,8 +101,7 @@
 ![使用方法1](https://github.com/Himakuma/QRCodeWebLoader/blob/master/manual/img/206_manual.jpg "使用方法")
 
 
-「読取開始」ボタンが、「読取停止」ボタンに変わり、中央のメッセージが「読み取り中」になります。
-
+「読取開始」ボタンが、「読取停止」ボタンに変わり、中央のメッセージが「読み取り中」になります。<br>
 この状態で、撮影、スクショした画像にQRコードが含まれている場合、自動的にWebブラウザが起動します。
 
 ![使用方法1](https://github.com/Himakuma/QRCodeWebLoader/blob/master/manual/img/207_manual.jpg "使用方法")
