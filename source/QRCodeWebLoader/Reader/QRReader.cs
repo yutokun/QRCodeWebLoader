@@ -11,6 +11,9 @@ namespace QRCodeWebLoader.Reader
 {
     class QRReader
     {
+        private string[] authorizationTexts = { "http", "vrchat" };
+
+
         /// <summary>
         /// QRコードリーダー
         /// </summary>
@@ -34,7 +37,7 @@ namespace QRCodeWebLoader.Reader
                     for (int i = 0; i < 4; i++)
                     {
                         Result result = reader.Decode(bmp);
-                        if (result != null && result.Text.StartsWith("http"))
+                        if (result != null && IsAuthorizationText(result.Text))
                         {
                             return result.Text;
                         }
@@ -46,6 +49,28 @@ namespace QRCodeWebLoader.Reader
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        private bool IsAuthorizationText(string val)
+        {
+            if (string.IsNullOrEmpty(val))
+            {
+                return false;
+            }
+
+            foreach (string authorizationText in authorizationTexts)
+            {
+                
+                if (val.StartsWith(authorizationText))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// ファイルパスをBitmapオブジェクト可
