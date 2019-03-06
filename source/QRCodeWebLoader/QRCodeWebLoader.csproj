@@ -85,9 +85,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Common\FileUtil.cs" />
     <Compile Include="Dialog\DefaultDialog.xaml.cs">
       <DependentUpon>DefaultDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entity\QRLoadData.cs" />
     <Compile Include="Reader\QrCodeUtil.cs" />
     <Compile Include="Reader\QRReader.cs" />
     <Compile Include="Settings.cs" />

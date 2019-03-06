@@ -6,10 +6,22 @@
         xmlns:local="clr-namespace:QRCodeWebLoader"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="QRCode Web Loader" Height="450" Width="800"
+        Title="QRCode Web Loader" Height="900" Width="1000"
         FontSize="12" FontFamily="MS Gothic"
-        Closing="Window_Closing">
+        Closing="Window_Closing"
+        Closed="Window_Closed">
+    <Window.Resources>
+        <Style TargetType="{x:Type ListViewItem}" >
+            <Setter Property="MinHeight" Value="100" />
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        </Style>
+    </Window.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="299*"/>
+            <RowDefinition Height="120*"/>
+        </Grid.RowDefinitions>
         <Label Content="URL" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="93"/>
         <TextBox x:Name="QRText" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"  HorizontalAlignment="Left" Height="23" Margin="108,9,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="588"/>
         <Button x:Name="QRCreate" Content="QR作成" HorizontalAlignment="Left" Margin="708,9,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="QRCreate_Click"/>
@@ -17,13 +29,42 @@
         <Label Content="保存先フォルダ" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,47,0,0" Width="93" VerticalAlignment="Top" Height="25"/>
         <TextBox x:Name="FileDirPath" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="108,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="588"/>
         <Button x:Name="DirDialog" Content="参照" HorizontalAlignment="Left" Margin="708,47,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="DirDialog_Click" />
-        <Button x:Name="Watcher" Content="読取開始" HorizontalAlignment="Left" Margin="708,140,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="Watcher_Click"/>
+        <Button x:Name="Watcher" Content="読取開始" HorizontalAlignment="Left" Margin="777,178,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="Watcher_Click" RenderTransformOrigin="-0.04,0.64"/>
         <Label Content="音量" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.798,-0.389" Width="93"  Height="25" />
         <Slider x:Name="Volume" HorizontalAlignment="Left" Margin="108,84,0,0" VerticalAlignment="Top" Width="588"  Height="25" Maximum="100" SmallChange="1" Value="100" IsSnapToTickEnabled="True"/>
         <Label Content="{Binding Value, ElementName=Volume}" HorizontalAlignment="Left" Margin="708,84,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
 
-        <Button x:Name="CreateLauncher" Content="同時起動ショートカット作成" HorizontalAlignment="Left" Margin="516,140,0,0" VerticalAlignment="Top" Width="180" Height="25" Click="CreateLauncher_Click"/>
+        <Button x:Name="CreateLauncher"  Content="同時起動ショートカット作成" HorizontalAlignment="Left" Margin="802,9,0,0" VerticalAlignment="Top" Width="180" Height="23" Click="CreateLauncher_Click" RenderTransformOrigin="0.517,0.335" Visibility="Hidden"/>
 
-        <Label x:Name="Status" Content="読み取り停止中" HorizontalContentAlignment="Center" FontSize="40" Foreground="Red" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,234,0,0" VerticalAlignment="Top" Width="773" Height="116"/>
+        <Label x:Name="Status" Content="読み取り停止中" HorizontalContentAlignment="Center" FontSize="20" Foreground="Red" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top" Width="526" Height="39"/>
+        <ListView x:Name="QRLoadList" ItemsSource="{Binding NotifyOnSourceUpdated=True}" Margin="0,215,0,0" Grid.RowSpan="2" MouseDoubleClick="QRLoadList_MouseDoubleClick" AllowDrop="True">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="アイコン" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <Image Source="{Binding Path=thumb}" ></Image>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="情報" Width="800">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Path=title}" FontWeight="Bold" FontSize="20" />
+                                    <TextBlock Text="{Binding Path=url}" FontSize="14" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <CheckBox x:Name="ShowWebView" Content="自動的にブラウザで開く" HorizontalAlignment="Left" Margin="604,178,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="25" Width="168" IsChecked="True" RenderTransformOrigin="0.877,0.84"/>
+        <Button x:Name="Delete" Content="削除" HorizontalAlignment="Left" Margin="10,169,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="Delete_Click"/>
+        <Button x:Name="UrlDistinct" Content="URL重複削除" HorizontalAlignment="Left" Margin="882,118,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="UrlDistinct_Click" RenderTransformOrigin="-0.04,0.64"/>
+        <Button x:Name="CSVRead" Content="ファイル読込" HorizontalAlignment="Left" Margin="777,148,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="CSVRead_Click" RenderTransformOrigin="-0.04,0.64"/>
+        <Button x:Name="TitleSort" Content="タイトルソート" HorizontalAlignment="Left" Margin="882,148,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="TitleSort_Click" RenderTransformOrigin="-0.04,0.64"/>
+        <Button x:Name="UrlSort" Content="URLソート" HorizontalAlignment="Left" Margin="882,178,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="UrlSort_Click" RenderTransformOrigin="-0.04,0.64"/>
     </Grid>
 </Window>
