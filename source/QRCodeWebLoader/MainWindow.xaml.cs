@@ -243,7 +243,10 @@ namespace QRCodeWebLoader
                     PlaySound(Properties.Resources.se_maoudamashii_onepoint07);
 
                     showDataList.Add(LoadQrCodeData(qrText));
-                    Process.Start(qrText);
+                    if ((bool)ShowWebView.IsChecked)
+                    {
+                        Process.Start(qrText);
+                    }
                     return;
                 }
             }
