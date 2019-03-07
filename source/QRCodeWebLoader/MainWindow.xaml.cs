@@ -299,7 +299,7 @@ namespace QRCodeWebLoader
             catch (Exception e)
             {
                 loadData.thumb = "";
-                loadData.title = "読込に失敗しましたアクセスできません。";
+                loadData.title = "URLにアクセスできません。有効なURLではない可能性があります。";
 
             }
             return loadData;
