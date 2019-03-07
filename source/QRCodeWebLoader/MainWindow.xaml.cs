@@ -282,11 +282,25 @@ namespace QRCodeWebLoader
         /// <returns></returns>
         private QRLoadData LoadQrCodeData(string url) {
             var loadData = new QRLoadData(url);
-            using (var client =  new HttpClient()) {
-                string result = client.GetAsync(loadData.url).Result.Content.ReadAsStringAsync().Result;
-                string domain = Regex.Match(loadData.url, @"(//)(?<domain>.*?)(/)").Groups["domain"].Value;
-                loadData.thumb = GetIconUrl(domain, result);
-                loadData.title = Regex.Match(result, @"(\<title\>)(?<title>.*?)(\</title\>)").Groups["title"].Value.Replace("\t", " ").Replace("\r\n", "").Replace("\n", "");
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var resultData = client.GetAsync(loadData.url).Result;
+                    if (resultData.StatusCode == HttpStatusCode.OK)
+                    {
+                        string result = resultData.Content.ReadAsStringAsync().Result;
+                        string domain = Regex.Match(loadData.url, @"(//)(?<domain>.*?)(/)").Groups["domain"].Value;
+                        loadData.thumb = GetIconUrl(domain, result);
+                        loadData.title = Regex.Match(result, @"(\<title\>)(?<title>.*?)(\</title\>)").Groups["title"].Value.Replace("\t", " ").Replace("\r\n", "").Replace("\n", "");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                loadData.thumb = "";
+                loadData.title = "URLにアクセスできません。有効なURLではない可能性があります。";
+
             }
             return loadData;
         }
