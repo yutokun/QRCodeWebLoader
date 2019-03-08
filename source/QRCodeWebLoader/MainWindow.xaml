@@ -29,14 +29,14 @@
         <Label Content="保存先フォルダ" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,47,0,0" Width="93" VerticalAlignment="Top" Height="25"/>
         <TextBox x:Name="FileDirPath" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="108,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="588"/>
         <Button x:Name="DirDialog" Content="参照" HorizontalAlignment="Left" Margin="708,47,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="DirDialog_Click" />
-        <Button x:Name="Watcher" Content="読取開始" HorizontalAlignment="Left" Margin="777,178,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="Watcher_Click" RenderTransformOrigin="-0.04,0.64"/>
+        <Button x:Name="Watcher" Content="読取開始" HorizontalAlignment="Left" Margin="733,178,0,0" VerticalAlignment="Top" Width="144" Height="25" Click="Watcher_Click" RenderTransformOrigin="-0.04,0.64"/>
         <Label Content="音量" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.798,-0.389" Width="93"  Height="25" />
         <Slider x:Name="Volume" HorizontalAlignment="Left" Margin="108,84,0,0" VerticalAlignment="Top" Width="588"  Height="25" Maximum="100" SmallChange="1" Value="100" IsSnapToTickEnabled="True"/>
         <Label Content="{Binding Value, ElementName=Volume}" HorizontalAlignment="Left" Margin="708,84,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
 
         <Button x:Name="CreateLauncher"  Content="同時起動ショートカット作成" HorizontalAlignment="Left" Margin="802,9,0,0" VerticalAlignment="Top" Width="180" Height="23" Click="CreateLauncher_Click" RenderTransformOrigin="0.517,0.335" Visibility="Hidden"/>
 
-        <Label x:Name="Status" Content="読み取り停止中" HorizontalContentAlignment="Center" FontSize="20" Foreground="Red" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top" Width="526" Height="39"/>
+        <Label x:Name="Status" Content="読み取り停止中" HorizontalContentAlignment="Center" FontSize="20" Foreground="Red" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top" Width="255" Height="39"/>
         <ListView x:Name="QRLoadList" ItemsSource="{Binding NotifyOnSourceUpdated=True}" Margin="0,215,0,0" Grid.RowSpan="2" MouseDoubleClick="QRLoadList_MouseDoubleClick" AllowDrop="True">
             <ListView.View>
                 <GridView>
@@ -60,11 +60,13 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <CheckBox x:Name="ShowWebView" Content="自動的にブラウザで開く" HorizontalAlignment="Left" Margin="604,178,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="25" Width="168" IsChecked="True" RenderTransformOrigin="0.877,0.84"/>
+        <CheckBox x:Name="ShowWebView" Content="自動的にブラウザで開く" HorizontalAlignment="Left" Margin="560,178,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="25" Width="168" IsChecked="True" RenderTransformOrigin="0.877,0.84"/>
         <Button x:Name="Delete" Content="削除" HorizontalAlignment="Left" Margin="10,169,0,0" VerticalAlignment="Top" Width="75" Height="25" Click="Delete_Click"/>
         <Button x:Name="UrlDistinct" Content="URL重複削除" HorizontalAlignment="Left" Margin="882,118,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="UrlDistinct_Click" RenderTransformOrigin="-0.04,0.64"/>
-        <Button x:Name="CSVRead" Content="ファイル読込" HorizontalAlignment="Left" Margin="777,148,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="CSVRead_Click" RenderTransformOrigin="-0.04,0.64"/>
+        <Button x:Name="CSVRead" Content="ファイルから一覧読込" HorizontalAlignment="Left" Margin="732,148,0,0" VerticalAlignment="Top" Width="145" Height="25" Click="CSVRead_Click" RenderTransformOrigin="-0.04,0.64"/>
         <Button x:Name="TitleSort" Content="タイトルソート" HorizontalAlignment="Left" Margin="882,148,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="TitleSort_Click" RenderTransformOrigin="-0.04,0.64"/>
         <Button x:Name="UrlSort" Content="URLソート" HorizontalAlignment="Left" Margin="882,178,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="UrlSort_Click" RenderTransformOrigin="-0.04,0.64"/>
+        <Button x:Name="ReLoad" Content="一覧アイコン再取得" HorizontalAlignment="Left" Margin="108,169,0,0" VerticalAlignment="Top" Width="157" Height="25" Click="ReLoad_Click"/>
+        <Label x:Name="ReloadLabel" Content="" HorizontalContentAlignment="Center" FontSize="20" Foreground="Red" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="270,121,0,0" VerticalAlignment="Top" Width="457" Height="39"/>
     </Grid>
 </Window>
