@@ -17,11 +17,19 @@ namespace QRCodeWebLoader.Entity
             this.url = url;
         }
 
+        public string GetTabRecode()
+        {
+            string recode = thumb + "\t";
+            recode += title + "\t";
+            recode += url + "\t";
+            return recode;
+        }
+
+
         public override int GetHashCode()
         {
             return url.GetHashCode();
         }
-
 
         public bool Equals(QRLoadData other)
         {

@@ -21,6 +21,7 @@ using Common;
 using System.Reflection;
 using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace QRCodeWebLoader
 {
@@ -37,7 +38,12 @@ namespace QRCodeWebLoader
         /// </summary>
         private Dictionary<string, string> iconPattern = new Dictionary<string, string>() {
             {"github.com", @"(\<link rel\=""fluid-icon"" href\="")(?<imgUrl>.*?)("")"},
-            {"booth.pm", @"(\<meta property\=""og:image"" content\="")(?<imgUrl>.*jpg?)("")"},
+            {"booth.pm", @"(\<meta property\=""og:image"" content\="")(?<imgUrl>.*?)("")"},
+            {"twitter.com", @"(\<img.*class\=""ProfileAvatar-image.*"".*src\="")(?<imgUrl>.*?)("")"}
+        };
+        private Dictionary<string, string> titlePattern = new Dictionary<string, string>() {
+            {"default", @"(\<title\>)(?<title>.*?)(\</title\>)"},
+            {"metaOgTitle", @"(\<meta property\=""og:title"" content\="")(?<title>.*?)("")"},
         };
 
         /// <summary>
@@ -93,23 +99,28 @@ namespace QRCodeWebLoader
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            QRDataSave();
+        }
+
+        /// <summary>
+        /// 差分が存在する場合、保存
+        /// </summary>
+        private void QRDataSave(bool diffBackup = true)
+        {
             string writeText = string.Empty;
             foreach (var qrData in showDataList)
             {
-                writeText += qrData.thumb + "\t";
-                writeText += qrData.title + "\t";
-                writeText += qrData.url + "\t";
-                writeText += "\n";
+                writeText += qrData.GetTabRecode() + "\n";
             }
 
             // 内容が差があれば複製
-            if (File.Exists(qrListPath) && writeText != FileUtil.GetAllText(qrListPath))
+            if (diffBackup && File.Exists(qrListPath) && writeText != FileUtil.GetAllText(qrListPath))
             {
                 File.Move(qrListPath, FileUtil.ExistsFilePathRename(qrListPath, DateTime.Now.ToString("yyyyMMdd_{0}")));
             }
             FileUtil.WriteText(writeText, qrListPath, Encoding.UTF8, false);
-
         }
+
 
         /// <summary>
         /// ファイルから一覧を読み込み
@@ -182,6 +193,7 @@ namespace QRCodeWebLoader
         /// <param name="e"></param>
         private void Watcher_Click(object sender, RoutedEventArgs e)
         {
+            QRDataSave();
             if (fileWatcher.EnableRaisingEvents)
             {
                 fileWatcher.EnableRaisingEvents = false;
@@ -189,7 +201,8 @@ namespace QRCodeWebLoader
                 Status.Content = "読み取り停止中";
                 FileDirPath.IsEnabled = true;
                 DirDialog.IsEnabled = true;
-
+                ReLoad.IsEnabled = true;
+                Delete.IsEnabled = true;
             }
             else
             {
@@ -213,9 +226,12 @@ namespace QRCodeWebLoader
                 Status.Content = "読み取り中";
                 FileDirPath.IsEnabled = false;
                 DirDialog.IsEnabled = false;
+                ReLoad.IsEnabled = false;
+                Delete.IsEnabled = false;
 
             }
         }
+
         private static void Watcher_Renamed(object source, RenamedEventArgs e)
         {
             WatcherChangeTypes wct = e.ChangeType;
@@ -243,6 +259,7 @@ namespace QRCodeWebLoader
                     PlaySound(Properties.Resources.se_maoudamashii_onepoint07);
 
                     showDataList.Add(LoadQrCodeData(qrText));
+                    QRDataSave(false);
                     if ((bool)ShowWebView.IsChecked)
                     {
                         Process.Start(qrText);
@@ -258,7 +275,8 @@ namespace QRCodeWebLoader
         /// <param name="domain"></param>
         /// <param name="docText"></param>
         /// <returns></returns>
-        private string GetIconUrl(string domain, string docText) {
+        private string GetIconUrl(string domain, string docText)
+        {
 
             if (iconPattern.ContainsKey(domain)) {
                 return Regex.Match(docText, iconPattern[domain]).Groups["imgUrl"].Value;
@@ -268,19 +286,38 @@ namespace QRCodeWebLoader
             foreach (var pattern in iconPattern.Values)
             {
                 imgUrl = Regex.Match(docText, pattern).Groups["imgUrl"].Value;
-                if (!string.IsNullOrEmpty(imgUrl)) {
-                    break;
-                }
+                if (!string.IsNullOrEmpty(imgUrl)) break;
+
             }
             return imgUrl;
         }
+
+
+        /// <summary>
+        /// タイトルの取得
+        /// </summary>
+        /// <param name="docText"></param>
+        /// <returns></returns>
+        private string GetTitle(string docText)
+        {
+            string title = string.Empty;
+            foreach (var pattern in titlePattern.Values)
+            {
+                title = Regex.Match(docText, pattern).Groups["title"].Value.Replace("\t", " ").Replace("\r\n", "").Replace("\n", "");
+                if (!string.IsNullOrEmpty(title)) break;
+            }
+            return title;
+
+        }
+
 
         /// <summary>
         /// QRコードのURLから情報を取得
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        private QRLoadData LoadQrCodeData(string url) {
+        private QRLoadData LoadQrCodeData(string url)
+        {
             var loadData = new QRLoadData(url);
             try
             {
@@ -290,9 +327,11 @@ namespace QRCodeWebLoader
                     if (resultData.StatusCode == HttpStatusCode.OK)
                     {
                         string result = resultData.Content.ReadAsStringAsync().Result;
+                        Console.WriteLine(loadData.url);
+                        Console.WriteLine(result);
                         string domain = Regex.Match(loadData.url, @"(//)(?<domain>.*?)(/)").Groups["domain"].Value;
                         loadData.thumb = GetIconUrl(domain, result);
-                        loadData.title = Regex.Match(result, @"(\<title\>)(?<title>.*?)(\</title\>)").Groups["title"].Value.Replace("\t", " ").Replace("\r\n", "").Replace("\n", "");
+                        loadData.title = GetTitle(result);
                     }
                 }
             }
@@ -483,5 +522,62 @@ namespace QRCodeWebLoader
             }
         }
 
+
+        private void AllSetEnabled(bool enabled)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke((Action<bool>)AllSetEnabled, enabled);
+                return;
+            }
+            FileDirPath.IsEnabled = enabled;
+            DirDialog.IsEnabled = enabled;
+            ReLoad.IsEnabled = enabled;
+            Delete.IsEnabled = enabled;
+            QRCreate.IsEnabled = enabled;
+            UrlDistinct.IsEnabled = enabled;
+            CSVRead.IsEnabled = enabled;
+            TitleSort.IsEnabled = enabled;
+            UrlSort.IsEnabled = enabled;
+            QRLoadList.IsEnabled = enabled;
+            Watcher.IsEnabled = enabled;
+            Volume.IsEnabled = enabled;
+            QRText.IsEnabled = enabled;
+            FileDirPath.IsEnabled = enabled;
+        }
+
+        private void ReLoad_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadLabel.Content = "アイコン再読み込み中、しばらくお待ちください。";
+            AllSetEnabled(false);
+            IconReLoad();
+        }
+
+        private void SuccessIconLoad(ObservableCollection<QRLoadData> loadData)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke((Action<ObservableCollection<QRLoadData>>)SuccessIconLoad, loadData);
+                return;
+            }
+            showDataList = loadData;
+            QRLoadList.ItemsSource = showDataList;
+            QRDataSave();
+            ReloadLabel.Content = "アイコン読込完了";
+            AllSetEnabled(true);
+        }
+
+        private async void IconReLoad()
+        {
+            await Task.Run(() =>
+            {
+                var loadList = new ObservableCollection<QRLoadData>();
+                foreach (var loadData in showDataList)
+                {
+                    loadList.Add(LoadQrCodeData(loadData.url));
+                }
+                SuccessIconLoad(loadList);
+            });
+        }
     }
 }
